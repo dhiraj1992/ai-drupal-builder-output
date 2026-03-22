@@ -1,60 +1,64 @@
-To generate a Drupal backend configuration for the given data, you need to create content types and potentially custom blocks to store and manage the configuration data for the header and hero section. Furthermore, if you want this to be exposed via the JSON:API, you need to ensure those endpoints are enabled and accessible.
+To configure a Drupal backend with the provided structure, you will want to create custom content types and ensure they are exposed via the JSON:API. Below is a step-by-step guide to achieve this.
 
-### Step 1: Create Content Types
+### Step 1: Define Content Types
 
-1. **Content Type: Global Header**
+#### Content Type: Header
 
-   - **Fields:**
-     - `field_logo`: Text field for storing the logo text.
-     - `field_navigation`: Entity reference (taxonomy term reference) or a simple list for storing navigation items. For simplicity, we might use a List (text) field.
+1. **Name**: Header
+2. **Fields**:
+   - **Logo**: (Text Field) - Machine Name: `field_logo`
+   - **Navigation**: (List (text)) - Machine Name: `field_navigation`
 
-2. **Content Type: Hero Section**
+#### Content Type: Main
 
-   - **Fields:**
-     - `field_background_image`: Image field for uploading the background image.
-     - `field_text_line1`: Text field for the first line of text.
-     - `field_text_line2`: Text field for the second line of text.
-     - `field_buttons`: Entity reference for a separate content type or custom block, or a complex custom field type combining a Link and text.
+1. **Name**: Main
+2. **Fields**:
+   - **Banner Title**: (Text Field) - Machine Name: `field_banner_title`
+   - **Banner Subtitle**: (Text Field) - Machine Name: `field_banner_subtitle`
+   - **Banner Buttons**: (Entity Reference Revisions to Banner Button Content Type) - Machine Name: `field_banner_buttons`
 
-3. **Content Type: Button**
+#### Content Type: Banner Button
 
-   - **Fields:**
-     - `field_button_text`: Text field for the button label.
-     - `field_button_link`: Link field for the button URL.
+1. **Name**: Banner Button
+2. **Fields**:
+   - **Text**: (Text Field) - Machine Name: `field_text`
+   - **Action**: (Text Field) - Machine Name: `field_action`
 
-### Step 2: Add JSON:API Configuration
+### Step 2: Configure JSON:API
 
-Ensure the JSON:API module is enabled for Drupal and that permissions are set so that the necessary endpoints are accessible.
+Ensure that JSON:API is enabled and correctly configured to expose the above content types. By default, JSON:API exposes all content types, but you can verify by navigating to `/admin/config/services/jsonapi`.
 
-**Configuring JSON:API:**
+### Step 3: Example JSON:API Configuration
 
-- JSON:API comes with default configurations that automatically expose content types. By default, when you define a new content type, it will be available under the JSON:API prefix. 
-- For example, the `Global Header` content type would be exposed under `/jsonapi/node/global_header` and the `Hero Section` will be under `/jsonapi/node/hero_section`.
+When you create instances of these content types, they will be available via JSON:API. Assuming the JSON:API module is enabled, you can fetch these resources with the following expected endpoints:
 
-### JSON:API Example Usage
+- **Header**: `/jsonapi/node/header`
+- **Main**: `/jsonapi/node/main`
+- **Banner Button**: `/jsonapi/node/banner_button`
 
-This can be accessed via HTTP GET requests to the appropriate endpoints once content is created. Ensure data is populated by creating nodes for these content types.
+### Step 4: Sample Usage
 
-### Summary
+Here is a sample configuration using the given JSON data:
 
-Here’s how the content types might look semantically:
+1. **Create a Header Node**:
+   - **Logo**: "ONEX"
+   - **Navigation**: ["Home", "About", "Services", "Team", "Portfolio", "Testimonials", "Blog", "Price Table", "Contact"]
 
-**Content Type: Global Header**
+2. **Create a Main Node**:
+   - **Banner Title**: "We Believe in Quality"
+   - **Banner Subtitle**: "Onex Creative Theme"
+   - **Banner Buttons**: Create two Banner Button nodes and reference them.
 
-- `Title`: "Main Navigation Header" (Example usage)
-- `field_logo`: "ONEX"
-- `field_navigation` (text list): ["Home", "About", "Services", "Team", "Portfolio", "Testimonials", "Blog", "Price Table", "Contact"]
+3. **Create Banner Button Nodes**:
+   - **First Button**:
+     - **Text**: "Discover Now"
+     - **Action**: "discover"
+   - **Second Button**:
+     - **Text**: "Purchase Onex"
+     - **Action**: "purchase"
 
-**Content Type: Hero Section**
+### Step 5: Test JSON:API
 
-- `Title`: "Main Hero Section" (Example usage)
-- `field_background_image`: Upload an image of dinnerware with wooden utensils.
-- `field_text_line1`: "We Believe in Quality"
-- `field_text_line2`: "Onex Creative Theme"
-- `field_buttons`: Create multiple `Button` content types:
-  - `field_button_text`: "Discover Now"
-  - `field_button_link`: "#discover"
-  - `field_button_text`: "Purchase Onex"
-  - `field_button_link`: "#purchase"
+Once you have created the nodes, test the JSON:API endpoints using a tool like Postman or a simple cURL request to ensure you get the proper JSON responses for each content type.
 
-This structure will allow Drupal to manage the specified data dynamically and expose it over JSON:API for integration with front-end applications or services.
+This setup will help you maintain structured content for integration with front-end applications, offering flexibility in content management and consumption through the JSON:API.
